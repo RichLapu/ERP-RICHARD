@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel ADM - Dashboard</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    
+    <!-- Bibliotecas Externas -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    
+    <!-- Chamada do CSS Externo -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <!-- ================= SEÇÃO DE LOGIN ================= -->
+    <div id="login-section" class="d-flex align-items-center justify-content-center vh-100 w-100 position-fixed top-0 start-0" style="background-color: #f4f6f9; z-index: 1050;">
+        <div class="card border-0 shadow-lg overflow-hidden" style="max-width: 900px; width: 95%; border-radius: 20px;">
+            <div class="row g-0">
+                <!-- Lado Esquerdo: Branding Corporativo (Oculto em telas de celular) -->
+                <div class="col-md-6 d-none d-md-flex flex-column align-items-center justify-content-center p-5 text-white" style="background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);">
+                    <i class="bi bi-hdd-network display-1 mb-4 opacity-75"></i>
+                    <h2 class="fw-bold mb-2">Intra NET</h2>
+                    <p class="text-center text-white-50 mb-0">Sistema Integrado de Gestão e Administração</p>
+                </div>
+                
+                <!-- Lado Direito: Formulário Moderno -->
+                <div class="col-md-6 p-4 p-md-5 bg-white d-flex flex-column justify-content-center">
+                    <div class="text-center mb-5">
+                        <h3 class="fw-bold text-dark mb-1">Bem-vindo(a)</h3>
+                        <p class="text-muted small">Insira suas credenciais para acessar o painel</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">E-MAIL CORPORATIVO</label>
+                        <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-envelope"></i></span>
+                            <input type="email" id="email" class="form-control bg-light border-0 fs-6" placeholder="seu.nome@ogmo-rg.com.br">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">SENHA</label>
+                        <div class="input-group input-group-lg shadow-sm rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-light border-0 text-muted"><i class="bi bi-lock"></i></span>                            
+                            <input type="password" id="senha" class="form-control bg-light border-0 fs-6" placeholder="••••••••">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="lembrar-email">
+                            <label class="form-check-label text-muted small fw-semibold" for="lembrar-email">Lembrar meu e-mail</label>
+                        </div>
+                        <a href="#" class="small fw-bold text-primary text-decoration-none">Esqueceu a senha?</a>
+                    </div>
+
+                    <button onclick="realizarLogin()" class="btn btn-primary w-100 py-3 mb-3 fw-bold rounded-3 shadow-sm" style="font-size: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                        Entrar no Sistema
+                    </button>
+                    
+                    <div id="login-mensagem" class="text-center text-danger fw-bold small" style="min-height: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= DASHBOARD ================= -->
+    <div id="dashboard-wrapper" class="d-none h-100" style="display: flex;">
+        
+        <!-- SIDEBAR -->
+        <div class="sidebar d-flex flex-column flex-shrink-0" id="sidebar">
+            <div class="p-3 border-bottom d-flex align-items-center justify-content-center" style="height: 68px;">
+                <h5 class="m-0 fw-bold" style="color: #4e73df;"><i class="bi bi-hdd-network"></i> <span class="sidebar-text ms-2">DASHBOARD</span></h5>
+            </div>
+
+            <div class="p-3 border-bottom text-center d-flex flex-column align-items-center">
+                <img src="" id="user-avatar" class="rounded-circle mb-2 shadow-sm" width="70" height="70" alt="Avatar">
+                <h6 class="mb-0 fw-bold text-truncate w-100" id="sidebar-nome">Carregando...</h6>
+                <small class="text-muted fw-semibold text-truncate w-100" id="sidebar-cargo">Carregando...</small>
+            </div>
+
+            <div class="nav flex-column p-2 mt-2">
+                <small class="text-muted fw-bold mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">PRINCIPAL</small>
+                
+                <a href="#" class="sidebar-link active" onclick="alternarAba('home', this)">
+                    <i class="bi bi-house-door"></i> <span class="sidebar-text ms-2">Início</span>
+                </a>
+
+                <small id="header-sistema" class="text-muted fw-bold mt-3 mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">SISTEMA</small>
+                
+                <a href="#" id="menu-lista" class="sidebar-link text-dark" onclick="alternarAba('lista', this)">
+                    <i class="bi bi-people"></i> <span class="sidebar-text ms-2">Usuários</span>
+                </a>
+
+                <a href="#" id="menu-permissoes" class="sidebar-link text-dark" onclick="alternarAba('permissoes', this)">
+                    <i class="bi bi-shield-lock"></i> <span class="sidebar-text ms-2">Permissões de Acesso</span>
+                </a>
+
+                <small id="header-estoque" class="text-muted fw-bold mt-3 mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">ESTOQUE</small>
+
+                <a href="#" id="menu-estoque-itens" class="sidebar-link text-dark" onclick="alternarAba('estoque-itens', this)">
+                    <i class="bi bi-box-seam"></i> <span class="sidebar-text ms-2">Itens e Produtos</span>
+                </a>
+                
+                <a href="#" id="menu-estoque-mov" class="sidebar-link text-dark" onclick="alternarAba('estoque-mov', this)">
+                    <i class="bi bi-arrow-left-right"></i> <span class="sidebar-text ms-2">Movimentações</span>
+                </a>
+
+                <a href="#" id="menu-estoque-fornecedores" class="sidebar-link text-dark" onclick="alternarAba('estoque-fornecedores', this)">
+                    <i class="bi bi-truck"></i> <span class="sidebar-text ms-2">Fornecedores</span>
+                </a>
+
+                <small id="header-clientes" class="text-muted fw-bold mt-3 mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">CLIENTES</small>
+
+                <a href="#" id="menu-clientes" class="sidebar-link text-dark" onclick="alternarAba('clientes', this)">
+                    <i class="bi bi-people"></i> <span class="sidebar-text ms-2">Clientes</span>
+                </a>
+
+                <!-- MENU FINANCEIRO -->
+                <small id="header-financeiro" class="text-muted fw-bold mt-3 mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">FINANCEIRO</small>
+                
+                <a href="#" id="menu-financeiro" class="sidebar-link text-dark" onclick="alternarAba('financeiro', this)">
+                    <i class="bi bi-wallet2"></i> <span class="sidebar-text ms-2">Controle Financeiro</span>
+                </a>
+
+                <small id="header-agenda" class="text-muted fw-bold mt-3 mb-2 ms-3 sidebar-text" style="font-size: 0.75rem;">AGENDA</small>
+                <a href="#" id="menu-agenda" class="sidebar-link text-dark" onclick="alternarAba('agenda', this)">
+                    <i class="bi bi-calendar-week"></i> <span class="sidebar-text ms-2">Calendário</span>
+                </a>
+
+            </div>
+
+            <div class="mt-auto p-2 border-top">
+                <button onclick="fazerLogout()" class="btn btn-light w-100 text-danger fw-bold d-flex align-items-center justify-content-center" title="Sair">
+                    <i class="bi bi-box-arrow-left"></i> <span class="sidebar-text ms-2">Sair</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content flex-grow-1" style="min-width: 0;">
+            <div class="top-navbar p-3 d-flex justify-content-between align-items-center" style="height: 68px;">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-link text-white p-0 me-3" onclick="toggleSidebar()"><i class="bi bi-list fs-3"></i></button>
+                    <h5 class="m-0 fw-semibold" id="header-title">Início</h5>
+                </div>
+                
+                <div class="d-flex align-items-center"> 
+                    <!-- BOTÃO DE TEMA APENAS COM ÍCONE -->
+                    <button id="btn-tema" class="btn btn-light rounded-circle shadow-sm me-4 d-flex align-items-center justify-content-center border-0" style="width: 35px; height: 35px;" onclick="alternarTema()" title="Alternar Tema">
+                        <i class="bi bi-moon-stars-fill text-dark"></i>
+                    </button>
+
+                    <span id="data-hora-topo" class="me-4 small fw-semibold d-none d-md-inline"></span>
+                    <i class="bi bi-bell fs-5" style="cursor: pointer;"></i>
+                </div>
+            </div>
+
+            <!-- ÁREAS DINÂMICAS (ABAS) -->
+            <div class="p-4 p-md-5">
+                
+                <!-- ================= ABA: HOME (CENTRO DE COMANDO) ================= -->
+                <div id="secao-home" class="d-block">
+                    <div class="mb-4">
+                        <h2 class="fw-bold text-dark" id="msg-boas-vindas">Carregando...</h2>
+                        <p class="text-muted">Este é o resumo operacional do seu sistema hoje.</p>
+                    </div>
+                    
+                    <!-- CARDS SUPERIORES -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                            <div class="card border-0 info-card h-100 p-3 bg-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted small fw-bold mb-1">Usuários Ativos</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="widget-usuarios">0</h3>
+                                    </div>
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle"><i class="bi bi-people-fill fs-4 text-primary"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card border-0 info-card h-100 p-3 bg-white" style="border-left-color: #1cc88a;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted small fw-bold mb-1">Tempo de Atividade...</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="widget-uptime">Lendo...</h3>
+                                    </div>
+                                    <div class="bg-success bg-opacity-10 p-3 rounded-circle"><i class="bi bi-server fs-4 text-success"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2" id="dash-card-clientes">
+                            <div class="card border-0 info-card h-100 p-3 bg-white" style="border-left-color: #f6c23e;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted small fw-bold mb-1">Clientes</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="widget-clientes">0</h3>
+                                    </div>
+                                    <div class="bg-warning bg-opacity-10 p-2 rounded-circle"><i class="bi bi-person-badge fs-5 text-warning"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="dash-card-estoque">
+                            <div class="card border-0 info-card h-100 p-3 bg-white" style="border-left-color: #e74a3b;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <p class="text-muted small fw-bold mb-1">Alertas Estoque</p>
+                                        <h3 class="fw-bold mb-0 text-dark" id="widget-alertas-estoque">0</h3>
+                                    </div>
+                                    <div class="bg-danger bg-opacity-10 p-2 rounded-circle"><i class="bi bi-exclamation-triangle fs-5 text-danger"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUNAS INFERIORES -->
+                    <div class="row g-4">
+                        
+                        <!-- Lado Esquerdo (70%) -->
+                        <div class="col-md-8">
+                            <!-- Gráfico Financeiro -->
+                            <div class="card border-0 shadow-sm mb-4 bg-white" style="border-radius: 16px;" id="dash-grafico-financeiro">
+                                <div class="card-header bg-white border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Balanço da Semana</h6>
+                                    <div class="text-end">
+                                        <small class="text-muted fw-bold" style="font-size: 0.65rem;">SALDO ATUAL</small>
+                                        <h5 class="fw-bold mb-0 text-dark" id="dash-saldo-atual">R$ 0,00</h5>
+                                    </div>
+                                </div>
+                                <div class="card-body" style="height: 250px;">
+                                    <canvas id="graficoFinanceiro"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Últimas Movimentações -->
+                            <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px;" id="dash-movimentacoes">
+                                <div class="card-header bg-white border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Últimas Movimentações (Estoque)</h6>
+                                    <button class="btn btn-sm btn-light" onclick="alternarAba('estoque-mov', document.getElementById('menu-estoque-mov'))">Ver tudo</button>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light text-muted" style="font-size: 0.75rem;">
+                                                <tr>
+                                                    <th class="ps-4">TIPO</th>
+                                                    <th>DATA</th>
+                                                    <th>QTD</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lista-ultimas-movimentacoes" class="border-top-0">
+                                                <tr><td colspan="3" class="text-center text-muted py-4 small">Carregando...</td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lado Direito (30%) -->
+                        <div class="col-md-4">
+                            <!-- Card de Clima e Câmbio -->
+                            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px; background: linear-gradient(135deg, #4e73df 0%, #224abe 100%); color: white;">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h6 class="fw-bold mb-0 opacity-75"><i class="bi bi-geo-alt-fill me-1"></i> Rio Grande, RS</h6>
+                                            <h1 class="fw-bold mb-0 mt-2 display-5" id="clima-temp">--°C</h1>
+                                            <small id="clima-desc">Buscando clima local...</small>
+                                        </div>
+                                        <i class="bi bi-cloud-sun display-4 opacity-50"></i>
+                                    </div>
+                                    <div class="d-flex justify-content-between border-top border-light pt-3 mt-3 border-opacity-25">
+                                        <div>
+                                            <small class="d-block opacity-75 fw-bold" style="font-size: 0.65rem;">DÓLAR</small>
+                                            <span class="fw-bold fs-5" id="cambio-dolar">R$ --</span>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="d-block opacity-75 fw-bold" style="font-size: 0.65rem;">EURO</small>
+                                            <span class="fw-bold fs-5" id="cambio-euro">R$ --</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mini Agenda do Dia -->
+                            <div class="card border-0 shadow-sm bg-white" style="border-radius: 16px;" id="dash-agenda">
+                                <div class="card-header bg-white border-0 pt-4 pb-2">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="bi bi-calendar-event text-primary me-2"></i>Agenda de Hoje</h6>
+                                </div>
+                                <div class="card-body p-3" id="lista-mini-agenda">
+                                    <div class="text-center text-muted small py-4">Carregando compromissos...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ABA: LISTAGEM E CADASTRO ================= -->
+                <div id="secao-lista" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-people text-primary me-2"></i> Gestão de Usuários</h4>
+                            <p class="text-muted small">Gerencie os acessos, cargos e perfis corporativos.</p>
+                        </div>
+                        <!-- BOTÃO QUE ABRE O MODAL COM ID ADICIONADO -->
+                        <button id="btn-novo-usuario" class="btn btn-primary fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#modalNovoUsuario">
+                            <i class="bi bi-person-plus me-1"></i> Novo Colaborador
+                        </button>
+                    </div>
+
+                    <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>COLABORADOR</th>
+                                            <th>CARGO</th>
+                                            <th>STATUS</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-usuarios" class="border-top-0"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ABA: PERMISSÕES ================= -->
+                <div id="secao-permissoes" class="d-none">
+                    <div class="row">
+                        <div class="col-md-5 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-3"><i class="bi bi-search me-2 text-primary"></i> Selecionar Usuário</h5>
+                                    <select id="select-permissoes-usuario" class="form-select mb-3" onchange="simularCargaDePermissoes()"><option value="">-- Selecione --</option></select>
+                                    <div id="info-usuario-selecionado" class="d-none p-3 bg-light rounded text-center mt-3">
+                                        <h6 class="fw-bold mb-0" id="perm-nome-exibicao">-</h6>
+                                        <small class="text-muted" id="perm-cargo-exibicao">-</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7 mb-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-4" id="painel-modulos" style="opacity: 0.4; pointer-events: none;">
+                                    <h5 class="fw-bold mb-4"><i class="bi bi-ui-checks-grid me-2 text-primary"></i> Módulos do Sistema</h5>
+                                    <div class="list-group">
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-listar">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Visualizar Usuários</strong>
+                                                <small class="d-block text-muted">Permite acessar a aba e ver a tabela de colaboradores (Somente Leitura).</small>
+                                            </span>
+                                        </label>
+                                        
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-cadastro">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Cadastrar Usuários</strong>
+                                                <small class="d-block text-muted">Exibe o botão de criar novos colaboradores na tela de gestão.</small>
+                                            </span>
+                                        </label>
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-permissoes">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Permissões de Acesso</strong>
+                                            </span>
+                                        </label>                                        
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-estoque-itens">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Gerenciar Itens</strong>
+                                                <small class="d-block text-muted">Permite cadastrar e editar produtos do estoque.</small>
+                                            </span>
+                                        </label>                                      
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-estoque-mov">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Movimentar Estoque</strong>
+                                                <small class="d-block text-muted">Permite registrar entradas, retiradas e devoluções.</small>
+                                            </span>
+                                        </label>
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-estoque-fornecedores">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Gerenciar Fornecedores</strong>
+                                                <small class="d-block text-muted">Permite cadastrar marcas e fornecedores do estoque.</small>
+                                            </span>
+                                        </label>
+
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-clientes">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Gerenciar Clientes</strong>
+                                                <small class="d-block text-muted">Permite cadastrar e editar dados de pessoas físicas e jurídicas.</small>
+                                            </span>
+                                        </label>
+
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-financeiro">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Controle Financeiro</strong>
+                                                <small class="d-block text-muted">Permite gerenciar receitas, despesas e o fluxo de caixa.</small>
+                                            </span>
+                                        </label>
+
+                                        <label class="list-group-item d-flex gap-3 py-3 border-0 bg-light mb-2 rounded">
+                                            <input class="form-check-input flex-shrink-0 fs-5" type="checkbox" id="mod-agenda">
+                                            <span class="pt-1 form-checked-content">
+                                                <strong>Agenda Corporativa</strong>
+                                                <small class="d-block text-muted">Permite visualizar e gerenciar compromissos e reuniões.</small>
+                                            </span>
+                                        </label>
+
+                                    </div>
+                                    <button onclick="salvarPermissoesBanco()" class="btn btn-primary mt-4 px-4 fw-bold">Salvar Permissões</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ================= ABA: ESTOQUE ITENS ================= -->
+                <div id="secao-estoque-itens" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-box-seam text-primary me-2"></i> Inventário de Produtos</h4>
+                            <p class="text-muted small">Gerencie os itens cadastrados no almoxarifado.</p>
+                        </div>
+                        <button class="btn btn-primary fw-bold shadow-sm" onclick="abrirModalNovoItem()">
+                            <i class="bi bi-plus-lg me-1"></i> Cadastrar Produto
+                        </button>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>CÓDIGO</th>
+                                            <th>PRODUTO</th>
+                                            <th>CATEGORIA</th>
+                                            <th>MARCA</th>
+                                            <th>FORNECEDOR</th>
+                                            <th>ESTOQUE</th>
+                                            <th>STATUS</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-estoque-itens" class="border-top-0">
+                                        <!-- Preenchido via JavaScript depois -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ABA: ESTOQUE MOVIMENTAÇÕES ================= -->
+                <div id="secao-estoque-mov" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-arrow-left-right text-primary me-2"></i> Fluxo de Movimentações</h4>
+                            <p class="text-muted small">Histórico de entradas, retiradas e devoluções.</p>
+                        </div>
+                        <button class="btn btn-success fw-bold shadow-sm" onclick="abrirModalMovimentacao()">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Nova Movimentação
+                        </button>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>DATA/HORA</th>
+                                            <th>PRODUTO</th>
+                                            <th>TIPO</th>
+                                            <th>QUANTIDADE</th>
+                                            <th>COLABORADOR</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-estoque-mov" class="border-top-0">
+                                        <!-- Preenchido via JavaScript depois -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                       <!-- ================= ABA: FORNECEDORES ================= -->
+                <div id="secao-estoque-fornecedores" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-truck text-primary me-2"></i> Gestão de Fornecedores</h4>
+                            <p class="text-muted small">Cadastre os parceiros comerciais e distribuidores.</p>
+                        </div>
+                        <button class="btn btn-primary fw-bold shadow-sm" onclick="abrirModalFornecedor()">
+                            <i class="bi bi-plus-lg me-1"></i> Novo Fornecedor
+                        </button>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>NOME FANTASIA</th>
+                                            <th>CNPJ</th>
+                                            <th>CONTATO</th>
+                                            <th>STATUS</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-fornecedores" class="border-top-0"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ================= ABA: CLIENTES ================= -->
+                <div id="secao-clientes" class="d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0"><i class="bi bi-people text-primary me-2"></i> Gestão de Clientes</h4>
+                            <p class="text-muted small">Gerencie as pessoas físicas e jurídicas cadastradas.</p>
+                        </div>
+                        <button class="btn btn-primary fw-bold shadow-sm" onclick="abrirModalCliente()">
+                            <i class="bi bi-plus-lg me-1"></i> Novo Cliente
+                        </button>
+                    </div>
+
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>TIPO</th>
+                                            <th>NOME / RAZÃO SOCIAL</th>
+                                            <th>DOCUMENTO</th>
+                                            <th>CONTATO</th>
+                                            <th>LOCALIDADE</th>
+                                            <th>STATUS</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-clientes" class="border-top-0"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- ================= ABA: CONTROLE FINANCEIRO ================= -->
+                <div id="secao-financeiro" class="d-none">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 class="fw-bold text-dark mb-0">Controle Financeiro</h4>
+                            <p class="text-muted small mb-0">Organize suas receitas e despesas</p>
+                        </div>
+                        <button class="btn btn-primary fw-bold shadow-sm" onclick="abrirModalFinanceiro()">
+                            <i class="bi bi-plus-lg me-1"></i> Nova Movimentação
+                        </button>
+                    </div>
+
+                    <!-- CARDS DE RESUMO -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="text-muted mb-2">Saldo atual</h6>
+                                    <h3 class="fw-bold text-dark mb-0" id="fin-saldo">R$ 0,00</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="text-muted mb-2">Receitas</h6>
+                                    <h3 class="fw-bold text-success mb-0" id="fin-receitas">R$ 0,00</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-4">
+                                    <h6 class="text-muted mb-2">Despesas</h6>
+                                    <h3 class="fw-bold text-danger mb-0" id="fin-despesas">R$ 0,00</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TABELA DE MOVIMENTAÇÕES -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h5 class="fw-bold text-dark mb-0">Movimentações</h5>
+                                    <p class="text-muted small mb-0">Veja suas receitas e despesas cadastradas</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <select id="fin-limite-pag" class="form-select form-select-sm" style="width: auto;" onchange="carregarTabelaMovimentacoes()">
+                                        <option value="10">10 por página</option>
+                                        <option value="25">25 por página</option>
+                                        <option value="50">50 por página</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+
+                                    <input type="text" id="fin-busca" class="form-control form-control-sm" placeholder="Buscar" oninput="carregarTabelaMovimentacoes()">
+                                    
+                                    <select id="fin-filtro-tipo" class="form-select form-select-sm" style="width: auto;" onchange="carregarTabelaMovimentacoes()">
+                                        <option value="todos">Todos</option>
+                                        <option value="receita">Receitas</option>
+                                        <option value="despesa">Despesas</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-light text-muted small">
+                                        <tr>
+                                            <th>DESCRIÇÃO</th>
+                                            <th>CATEGORIA</th>
+                                            <th>DATA</th>
+                                            <th>TIPO</th>
+                                            <th>VALOR</th>
+                                            <th>AUTOR</th>
+                                            <th class="text-end">AÇÕES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabela-financeiro" class="border-top-0"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= ABA: AGENDA ================= -->
+                <div id="secao-agenda" class="d-none">
+                    <div class="row g-3 h-100">
+                        <!-- PAINEL LATERAL ESQUERDO (Filtros e Info) -->
+                        <div class="col-md-3">
+                            <div class="card shadow-sm border-0 mb-3">
+                                <div class="card-body text-center p-4">
+                                    <h4 class="fw-bold text-primary mb-4 text-start">Agenda</h4>
+                                    
+                                    <div class="mb-4">
+                                        <img src="" id="agenda-avatar-filtro" class="rounded-circle mb-2 shadow-sm" width="70" height="70" alt="Avatar" style="object-fit: cover; background: #eaecf0;">
+                                        <select id="filtro-agenda-colaborador" class="form-select form-select-sm border-0 bg-light fw-bold text-center mt-2" onchange="filtrarCalendario()">
+                                            <option value="todos">Todos os Colaboradores</option>
+                                            <!-- Preenchido via JS -->
+                                        </select>
+                                    </div>
+
+                                    <div class="row text-center g-2 mb-4">
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded">
+                                                <h4 class="mb-0 text-dark fw-bold" id="qtd-agendados">0</h4>
+                                                <small class="text-muted" style="font-size: 0.65rem;">Agendados</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-2 border rounded">
+                                                <h4 class="mb-0 text-dark fw-bold" id="qtd-finalizados">0</h4>
+                                                <small class="text-muted" style="font-size: 0.65rem;">Finalizados</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button class="btn btn-outline-primary w-100 fw-bold" onclick="abrirModalAgenda()">
+                                        <i class="bi bi-plus-lg me-1"></i> Novo agendamento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CALENDÁRIO PRINCIPAL -->
+                        <div class="col-md-9">
+                            <div class="card shadow-sm border-0 h-100">
+                                <div class="card-body p-3">
+                                    <div id="calendario"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>  
+
+    <!-- ================= MODAL NOVO USUÁRIO ================= -->
+    <div class="modal fade" id="modalNovoUsuario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow" style="border-radius: 16px;">
+                <div class="modal-header bg-light border-0" style="border-radius: 16px 16px 0 0;">
+                    <h5 class="modal-title fw-bold text-primary"><i class="bi bi-person-plus me-2"></i>Cadastrar Colaborador</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">NOME COMPLETO *</label>
+                        <input type="text" id="novo-nome" class="form-control" placeholder="Ex: João da Silva">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">E-MAIL CORPORATIVO *</label>
+                        <input type="email" id="novo-email" class="form-control" placeholder="joao@empresa.com.br">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">SENHA INICIAL *</label>
+                        <input type="password" id="novo-senha" class="form-control" placeholder="••••••••">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">NÍVEL DE ACESSO *</label>
+                        <select id="novo-role" class="form-select">
+                            <option value="Administrador">Administrador</option>
+                            <option value="RH">Recursos Humanos (RH)</option>
+                            <option value="T.I">T.I</option>
+                            <option value="Segurança do Trabalho">Segurança do Trabalho</option>
+                            <option value="Medicina">Medicina</option>
+                            <option value="Juridico">Jurídico</option>
+                            <option value="Operador de Estoque">Operador de Estoque</option>
+                        </select>
+                    </div>
+                    <div id="cadastro-mensagem" class="text-center fw-bold text-danger mb-3"></div>
+                </div>
+                <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 16px 16px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button onclick="cadastrarFuncionario()" class="btn btn-success px-4 fw-bold">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL FINANCEIRO (NOVO / EDITAR) ================= -->
+    <div class="modal fade" id="modalFinanceiro" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary" id="titulo-modal-fin"><i class="bi bi-wallet2 me-2"></i>Registrar Movimentação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="fin-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">DESCRIÇÃO *</label>
+                        <input type="text" id="fin-descricao" class="form-control" placeholder="Ex: Salário, mercado ou aluguel">
+                    </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">VALOR (R$) *</label>
+                            <input type="text" id="fin-valor" class="form-control" placeholder="0,00" oninput="aplicarMascaraMoeda(this)">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">TIPO *</label>
+                            <select id="fin-tipo" class="form-select">
+                                <option value="receita">Receita</option>
+                                <option value="despesa">Despesa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">CATEGORIA *</label>
+                            <select id="fin-categoria" class="form-select">
+                                <option value="">Selecione</option>
+                                <option value="Salário">Salário</option>
+                                <option value="Vendas">Vendas</option>
+                                <option value="Alimentação">Alimentação</option>
+                                <option value="Moradia">Moradia</option>
+                                <option value="Transporte">Transporte</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">DATA *</label>
+                            <input type="date" id="fin-data" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" onclick="salvarMovimentacao()" class="btn btn-primary fw-bold px-4">Salvar Movimentação</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL AGENDA ================= -->
+    <div class="modal fade" id="modalAgenda" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary" id="titulo-modal-agenda"><i class="bi bi-calendar me-2"></i>Agendar Compromisso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="age-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">TÍTULO DA REUNIÃO / EVENTO *</label>
+                        <input type="text" id="age-titulo" class="form-control" placeholder="Ex: Reunião de Alinhamento">
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">NOSSO COLABORADOR *</label>
+                            <select id="age-colaborador" class="form-select"></select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">NOME DO CLIENTE / EXTERNO</label>
+                            <input type="text" id="age-externo" class="form-control" placeholder="Deixe em branco se for interno">
+                        </div>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">INÍCIO *</label>
+                            <input type="datetime-local" id="age-inicio" class="form-control">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">TÉRMINO *</label>
+                            <input type="datetime-local" id="age-fim" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">COR DE IDENTIFICAÇÃO</label>
+                        <select id="age-cor" class="form-select">
+                            <option value="#4e73df" style="color:#4e73df; font-weight:bold;">Azul (Padrão)</option>
+                            <option value="#1cc88a" style="color:#1cc88a; font-weight:bold;">Verde (Confirmado)</option>
+                            <option value="#f6c23e" style="color:#f6c23e; font-weight:bold;">Amarelo (Atenção)</option>
+                            <option value="#e74a3b" style="color:#e74a3b; font-weight:bold;">Vermelho (Urgente)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">OBSERVAÇÕES</label>
+                        <textarea id="age-obs" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-cancelar-age" onclick="cancelarAgendamento()" class="btn btn-danger fw-bold d-none">Cancelar Agendamento</button>
+                    <button type="button" onclick="salvarAgendamento()" class="btn btn-primary fw-bold px-4">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL CLIENTE ================= -->
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary" id="titulo-modal-cliente"><i class="bi bi-people me-2"></i>Cadastrar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="cli-id">
+                    
+                    <!-- SELETOR PF / PJ -->
+                    <div class="d-flex gap-4 mb-4 pb-3 border-bottom">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="cli_tipo" id="tipo_pf" value="PF" checked onchange="alternarTipoCliente()">
+                            <label class="form-check-label fw-bold" for="tipo_pf">Pessoa Física (PF)</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="cli_tipo" id="tipo_pj" value="PJ" onchange="alternarTipoCliente()">
+                            <label class="form-check-label fw-bold" for="tipo_pj">Pessoa Jurídica (PJ)</label>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- DADOS PRINCIPAIS -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted" id="label-nome">NOME COMPLETO *</label>
+                            <input type="text" id="cli-nome" class="form-control" placeholder="Nome do cliente ou Razão Social">
+                        </div>
+                        <div class="col-md-6" id="box-fantasia" style="display: none;">
+                            <label class="form-label small fw-bold text-muted">NOME FANTASIA</label>
+                            <input type="text" id="cli-fantasia" class="form-control" placeholder="Nome comercial da empresa">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted" id="label-documento">CPF *</label>
+                            <input type="text" id="cli-documento" class="form-control" oninput="aplicarMascaraDoc(this)">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted" id="label-rg-ie">RG</label>
+                            <input type="text" id="cli-rg-ie" class="form-control" placeholder="Apenas números ou ISENTO">
+                        </div>
+
+                        <!-- SESSÃO DE ENDEREÇO (COM AUTOPREENCHIMENTO) -->
+                        <div class="col-12 mt-4 pt-3 border-top">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-geo-alt me-1"></i> Endereço</h6>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted">CEP</label>
+                            <input type="text" id="cli-cep" class="form-control" maxlength="9" oninput="aplicarMascaraCEP(this)" onblur="buscarCEP()">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold text-muted">ENDEREÇO / RUA</label>
+                            <input type="text" id="cli-endereco" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small fw-bold text-muted">NÚMERO *</label>
+                            <input type="text" id="cli-numero" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">COMPLEMENTO</label>
+                            <input type="text" id="cli-complemento" class="form-control" placeholder="Apto, Sala, Bloco">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">BAIRRO</label>
+                            <input type="text" id="cli-bairro" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">CIDADE</label>
+                            <input type="text" id="cli-cidade" class="form-control">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label small fw-bold text-muted">UF</label>
+                            <input type="text" id="cli-uf" class="form-control" maxlength="2">
+                        </div>
+
+                        <!-- SESSÃO DE CONTATO -->
+                        <div class="col-12 mt-4 pt-3 border-top">
+                            <h6 class="fw-bold text-secondary mb-3"><i class="bi bi-telephone me-1"></i> Contato e Observações</h6>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">E-MAIL PRINCIPAL</label>
+                            <input type="email" id="cli-email" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">CELULAR (WHATSAPP)</label>
+                            <input type="text" id="cli-celular" class="form-control" oninput="this.value = aplicarMascaraTelefone(this.value)">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">TELEFONE FIXO</label>
+                            <input type="text" id="cli-telefone" class="form-control" oninput="this.value = aplicarMascaraTelefone(this.value)">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">OBSERVAÇÕES INTERNAS</label>
+                            <textarea id="cli-observacao" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" onclick="salvarCliente()" class="btn btn-primary fw-bold px-4">Salvar Cadastro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL EDITAR USUÁRIO================= -->
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary">Editar Registro</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="edit-id">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">NOME</label>
+                        <input type="text" id="edit-nome" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">E-MAIL</label>
+                        <input type="email" id="edit-email" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CARGO</label>
+                        <select id="edit-role" class="form-select">
+                            <option value="Administrador">Administrador</option>
+                            <option value="RH">Recursos Humanos (RH)</option>
+                            <option value="T.I">T.I</option>
+                            <option value="Segurança do Trabalho">Segurança do Trabalho</option>
+                            <option value="Medicina">Medicina</option>
+                            <option value="Juridico">Jurídico</option>
+                            <option value="Operador de Estoque">Operador de Estoque</option>
+                        </select>
+                    </div>
+                    <hr class="my-4 text-muted">
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold text-danger"><i class="bi bi-key me-1"></i> REDEFINIR SENHA</label>
+                        <input type="password" id="edit-senha" class="form-control" placeholder="Preencha apenas para trocar a senha atual">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" onclick="salvarEdicao()" class="btn btn-primary fw-bold px-4">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL NOVO ITEM (ESTOQUE) ================= -->
+    <div class="modal fade" id="modalNovoItem" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary" id="titulo-modal-item"><i class="bi bi-box-seam me-2"></i>Cadastrar Novo Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="item-id">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small fw-bold text-muted">CÓDIGO / SKU</label>
+                            <input type="text" id="item-codigo" class="form-control" placeholder="EX-001">
+                        </div>
+                        <div class="col-md-9">
+                            <label class="form-label small fw-bold text-muted">NOME DO PRODUTO *</label>
+                            <input type="text" id="item-nome" class="form-control" placeholder="Ex: Pastilha de Freio">
+                        </div>
+                        
+                        <!-- NOVOS CAMPOS: MARCA E FORNECEDOR -->
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">MARCA</label>
+                            <input type="text" id="item-marca" class="form-control" placeholder="Ex: Bosch, 3M">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label small fw-bold text-muted">FORNECEDOR</label>
+                            <select id="item-fornecedor" class="form-select">
+                                <option value="">-- Selecione um Fornecedor --</option>
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">CATEGORIA</label>
+                            <input type="text" id="item-categoria" class="form-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-bold text-muted">ESTOQUE MÍNIMO</label>
+                            <input type="number" id="item-minimo" class="form-control" value="5">
+                        </div>
+                        <div class="col-md-4"></div> <!-- Espaçamento -->
+                        
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">PREÇO DE CUSTO (R$)</label>
+                            <input type="number" step="0.01" id="item-custo" class="form-control" placeholder="0,00">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-muted">PREÇO DE VENDA (R$)</label>
+                            <input type="number" step="0.01" id="item-venda" class="form-control" placeholder="0,00">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold text-muted">DESCRIÇÃO / OBSERVAÇÕES</label>
+                            <textarea id="item-descricao" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-salvar-item" onclick="salvarNovoItem()" class="btn btn-primary fw-bold px-4">Salvar Produto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL NOVA MOVIMENTAÇÃO ================= -->
+    <div class="modal fade" id="modalMovimentacao" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-success" id="titulo-modal-mov"><i class="bi bi-arrow-left-right me-2"></i>Registrar Movimentação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    
+                    <input type="hidden" id="mov-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">TIPO DE MOVIMENTAÇÃO</label>
+                        <select id="mov-tipo" class="form-select">
+                            <option value="entrada">Entrada (Adicionar ao Estoque)</option>
+                            <option value="retirada">Retirada (Consumo / Venda)</option>
+                            <option value="devolucao">Devolução (Retorno ao Estoque)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">PRODUTO</label>
+                        <select id="mov-produto-id" class="form-select">
+                            <option value="">-- Carregando produtos... --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">QUANTIDADE</label>
+                        <input type="number" id="mov-quantidade" class="form-control" value="1" min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">JUSTIFICATIVA / OBSERVAÇÃO</label>
+                        <input type="text" id="mov-obs" class="form-control" placeholder="Opcional. Ex: Venda #1024, Reposição, etc.">
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-salvar-mov" onclick="salvarMovimentacaoEstoque()" class="btn btn-success fw-bold px-4">Confirmar Lançamento</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL FORNECEDOR ================= -->
+    <div class="modal fade" id="modalFornecedor" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-light border-0">
+                    <h5 class="modal-title fw-bold text-primary" id="titulo-modal-fornecedor"><i class="bi bi-truck me-2"></i>Cadastrar Fornecedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <input type="hidden" id="forn-id">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">NOME FANTASIA / RAZÃO SOCIAL *</label>
+                        <input type="text" id="forn-nome" class="form-control" placeholder="Ex: Distribuidora Silva">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">CNPJ (Opcional)</label>
+                        <input type="text" id="forn-cnpj" class="form-control" placeholder="00.000.000/0000-00" maxlength="18" oninput="this.value = aplicarMascaraCNPJ(this.value)">
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">TELEFONE</label>
+                            <input type="text" id="forn-telefone" class="form-control" placeholder="(00) 00000-0000" maxlength="15" oninput="this.value = aplicarMascaraTelefone(this.value)">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-muted">E-MAIL</label>
+                            <input type="email" id="forn-email" class="form-control" placeholder="contato@empresa.com">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-salvar-fornecedor" onclick="salvarFornecedor()" class="btn btn-primary fw-bold px-4">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= NOTIFICAÇÕES (TOASTS) ================= -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-4" style="z-index: 1100;">
+        <div id="toastAlerta" class="toast align-items-center border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold text-white fs-6" id="toast-mensagem"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bibliotecas Javascript Necessárias -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- BIBLIOTECA DE GRÁFICOS (CHART.JS) ADICIONADA AQUI -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FullCalendar Standard (Visão de Clínica/Grade Semanal) -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.9/locales/pt-br.global.min.js'></script>
+
+    <!-- Importação dos Scripts Modulares (Em ordem de dependência) -->
+    <script src="/js/globais.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/usuarios.js"></script>
+    <script src="/js/estoque.js"></script>
+    <script src="/js/fornecedores.js"></script>
+    <script src="/js/clientes.js"></script>
+    <script src="/js/financeiro.js"></script>
+    <script src="/js/agenda.js"></script>
+
+</body>
+</html>

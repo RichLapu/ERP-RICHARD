@@ -1,0 +1,442 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #f4f6f9;
+}
+
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #dee2e6;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed { width: 70px; }
+.sidebar.collapsed .sidebar-text, 
+.sidebar.collapsed #sidebar-nome, 
+.sidebar.collapsed #sidebar-cargo { display: none; }
+.sidebar.collapsed #user-avatar { width: 40px; height: 40px; transition: all 0.3s ease; }
+
+.sidebar-link {
+    border-radius: 5px;
+    margin-bottom: 5px;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-link i { font-size: 1.2rem; min-width: 30px; }
+.sidebar-link:hover { background-color: #f8f9fa; color: #0d6efd; }
+.sidebar-link.active { background-color: #0d6efd; color: #ffffff !important; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2); }
+
+.top-navbar { background-color: #4e73df; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.main-content { height: 100vh; overflow-y: auto; }
+.info-card { 
+    border-radius: 16px !important; /* Cantos bem arredondados */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06) !important; /* Sombra grande e suave */
+    border-left: 5px solid #4e73df; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+.info-card:hover { 
+    transform: translateY(-6px); /* Levanta ao passar o mouse */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important; /* Sombra aumenta */
+}
+
+/* ================= MODO ESCURO ================= */
+body.dark-mode {
+    background-color: #121212 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .bg-light, 
+body.dark-mode .card,
+body.dark-mode .modal-content,
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer,
+body.dark-mode .list-group-item,
+body.dark-mode .sidebar {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode input, 
+body.dark-mode select, 
+body.dark-mode textarea {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+    border-color: #444 !important;
+}
+body.dark-mode input::placeholder { color: #888 !important; }
+
+body.dark-mode .bg-white {
+    background-color: #1e1e1e !important;
+}
+
+body.dark-mode .table {
+    --bs-table-bg: #1e1e1e;
+    --bs-table-color: #e0e0e0;
+    --bs-table-border-color: #333;
+    --bs-table-hover-bg: #2a2a2a;
+    --bs-table-hover-color: #ffffff;
+    --bs-table-striped-bg: #242424;
+}
+
+body.dark-mode .table > :not(caption) > * > *,
+body.dark-mode .table td,
+body.dark-mode .table th,
+body.dark-mode .table tr {
+    background-color: #1e1e1e !important;
+    color: #e0e0e0 !important;
+    border-color: #333 !important;
+}
+
+body.dark-mode .table-light th,
+body.dark-mode .table thead th {
+    background-color: #242424 !important;
+    color: #ffffff !important;
+    border-bottom: 2px solid #444 !important;
+}
+
+body.dark-mode .table-hover > tbody > tr:hover > * {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .table .text-dark {
+    color: #ffffff !important;
+}
+
+body.dark-mode .sidebar .sidebar-link,
+body.dark-mode .sidebar .sidebar-link.text-dark,
+body.dark-mode .sidebar .sidebar-text,
+body.dark-mode .sidebar small.text-muted,
+body.dark-mode .sidebar i {
+    color: #e0e0e0 !important;
+}
+
+
+body.dark-mode .sidebar .sidebar-link:hover {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+}
+
+
+body.dark-mode h4.text-dark,
+body.dark-mode h5.text-dark,
+body.dark-mode h6.text-dark,
+body.dark-mode p.text-muted {
+    color: #f8f9fa !important;
+}
+
+
+body.dark-mode small,
+body.dark-mode .small,
+body.dark-mode .text-muted,
+body.dark-mode .table .text-muted,
+body.dark-mode .table small {
+    color: #adb5bd !important; 
+}
+
+
+body.dark-mode .table .btn-link.text-primary {
+    color: #6ea8fe !important;
+}
+
+
+
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, 
+body.dark-mode h4, body.dark-mode h5, body.dark-mode h6,
+body.dark-mode .h1, body.dark-mode .h2, body.dark-mode .h3 {
+    color: #f8f9fa !important;
+}
+
+
+body.dark-mode .text-body,
+body.dark-mode .text-black {
+    color: #f8f9fa !important;
+}
+
+
+body.dark-mode .card-body,
+body.dark-mode .card-body h1,
+body.dark-mode .card-body h2,
+body.dark-mode .card-body h3,
+body.dark-mode .card-body p,
+body.dark-mode .card-body span,
+body.dark-mode .card-body div,
+body.dark-mode .card-body strong,
+body.dark-mode .card-body b {
+    color: #ffffff !important;
+}
+
+body.dark-mode .sidebar .text-danger,
+body.dark-mode .sidebar i.text-danger,
+body.dark-mode .text-danger {
+    color: #dc3545 !important; 
+}
+
+/* Se o botão for inteiro vermelho (fundo vermelho e texto branco) */
+body.dark-mode .btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .sidebar .p-3.bg-white,
+body.dark-mode .sidebar > div.bg-white {
+    background-color: #1e1e1e !important;
+    border-top: 1px solid #333 !important;
+}
+
+/* Encontra o botão Sair pela função de logout e transforma num botão vermelho sólido */
+body.dark-mode .sidebar [onclick="fazerLogout()"],
+body.dark-mode .sidebar a.text-danger {
+    background-color: #dc3545 !important; /* Fundo vermelho */
+    color: #ffffff !important;            /* Texto branco */
+    border: none !important;
+    box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2) !important;
+}
+
+/* Garante que o ícone do botão Sair também fique branco */
+body.dark-mode .sidebar [onclick="fazerLogout()"] i,
+body.dark-mode .sidebar a.text-danger i {
+    color: #ffffff !important;
+}
+
+/* ================= BARRA DE ROLAGEM MODERNA DA SIDEBAR ================= */
+.sidebar {
+    overflow-y: auto; /* Permite rolar quando houver muitos menus */
+    scrollbar-width: thin; /* Para Firefox */
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+/* Para navegadores baseados em Chrome/Edge/Safari */
+.sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+}
+
+/* ================= AGENDA CUSTOMIZADA (ESTILO MODERNO) ================= */
+.agenda-wrapper {
+    display: flex;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    position: relative;
+}
+
+.agenda-coluna-horas {
+    width: 70px;
+    flex-shrink: 0;
+    border-right: 1px solid #eaecf0;
+    background: #f8f9fa;
+}
+
+.agenda-hora-slot {
+    height: 60px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 600;
+    padding-top: 5px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.agenda-coluna-colaborador {
+    flex: 1;
+    min-width: 200px;
+    border-right: 1px solid #eaecf0;
+    position: relative;
+    background: #fff;
+}
+
+.agenda-coluna-header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid #eaecf0;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.agenda-coluna-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 5px;
+}
+
+.agenda-grade-corpo {
+    position: relative;
+    /* 14 horas do dia (das 7h às 21h) * 60px por hora = 840px */
+    height: 840px; 
+    background-image: linear-gradient(to bottom, #eaecf0 1px, transparent 1px);
+    background-size: 100% 60px;
+}
+
+.agenda-card-evento {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+    z-index: 5;
+}
+
+.agenda-card-evento:hover {
+    transform: scale(1.02);
+    z-index: 6;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.agenda-card-horario {
+    font-size: 0.65rem;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 4px;
+}
+
+.agenda-card-titulo {
+    font-size: 0.8rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.agenda-card-sub {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+/* ================= VISUAL AGENDA (ESTILO CLÍNICA) ================= */
+.fc-theme-standard th {
+    padding: 10px 0 !important;
+    background-color: #fff !important;
+    border-color: #eaecf0 !important;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #555;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border-color: #eaecf0 !important;
+}
+
+.fc-timegrid-slot-label {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.fc-event {
+    border-radius: 2px !important; 
+    border: none !important;
+    box-shadow: inset 3px 0 0 rgba(0,0,0,0.15) !important; /* Dá um efeito de profundidade na esquerda do card */
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.fc-event:hover { opacity: 0.85; }
+
+.fc-timegrid-col.fc-day-today {
+    background-color: rgba(13, 110, 253, 0.02) !important; 
+}
+
+/* ================= CUSTOMIZAÇÃO DA BARRA DE ROLAGEM (SIDEBAR) ================= */
+
+/* Para o Firefox */
+#sidebar, 
+#sidebar .nav {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
+    
+}
+
+/* Para navegadores WebKit (Chrome, Edge, Safari, Opera) */
+#sidebar::-webkit-scrollbar,
+#sidebar .nav::-webkit-scrollbar {
+    width: 1px !important; /* Deixa a barra com 5 pixels de espessura */
+}
+
+/* O fundo da barra (transparente para ficar invisível) */
+#sidebar::-webkit-scrollbar-track,
+#sidebar .nav::-webkit-scrollbar-track {
+    background: transparent !important; 
+}
+
+/* O "pino" da barra (a parte que você clica e arrasta) */
+#sidebar::-webkit-scrollbar-thumb,
+#sidebar .nav::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2) !important; /* Cinza suave */
+    border-radius: 10px !important; /* Arredonda as pontas */
+}
+
+/* Quando passa o mouse por cima do pino */
+#sidebar::-webkit-scrollbar-thumb:hover,
+#sidebar .nav::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4) !important; /* Fica mais escura */
+}
+/* ================= BARRA DE ROLAGEM UNIFICADA (SIDEBAR) ================= */
+
+.sidebar {
+    /* Força o contêiner a aceitar rolagem vertical e barrar a horizontal */
+    overflow-y: auto !important; 
+    overflow-x: hidden !important;
+    
+    /* 
+       MÁGICA DO FIREFOX: 'none' esconde a barra feia do Windows, 
+       mas você continua conseguindo rolar normalmente com a roda do mouse! 
+    */
+    scrollbar-width: none !important; 
+}
+
+/* ================= NAVEGADORES WEBKIT (Chrome, Edge, Safari) ================= */
+.sidebar::-webkit-scrollbar {
+    width: 4px !important; /* Fininha e elegante */
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent !important; 
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15) !important; 
+    border-radius: 10px !important;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3) !important; 
+}
