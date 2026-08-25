@@ -289,6 +289,39 @@ function simularCargaDePermissoes() {
         document.getElementById('perm-nome-exibicao').innerText = usuario.nome;
         document.getElementById('perm-cargo-exibicao').innerText = usuario.role;
         infoBox.classList.remove('d-none');
+
+        // =========================================================
+        // TRAVA DE SEGURANÇA PARA O ADMINISTRADOR
+        // =========================================================
+        const checkboxes = document.querySelectorAll('#painel-modulos .form-check-input');
+        const btnSalvar = document.querySelector('button[onclick="salvarPermissoesBanco()"]');
+
+        if (usuario.role === 'Administrador') {
+            // Se for Admin: Marca TUDO obrigatoriamente e bloqueia a edição
+            checkboxes.forEach(chk => {
+                chk.checked = true;
+                chk.disabled = true;
+            });
+            
+            // Desativa o botão de salvar para o Admin e muda a cor/texto
+            if (btnSalvar) {
+                btnSalvar.disabled = true;
+                btnSalvar.innerText = "Acesso Total (Padrão do Sistema)";
+                btnSalvar.classList.remove('btn-primary');
+                btnSalvar.classList.add('btn-secondary');
+            }
+        } else {
+            // Se for outro cargo: Libera os checkboxes para edição normal
+            checkboxes.forEach(chk => chk.disabled = false);
+            
+            // Restaura o botão de salvar para o estado original
+            if (btnSalvar) {
+                btnSalvar.disabled = false;
+                btnSalvar.innerText = "Salvar Permissões";
+                btnSalvar.classList.remove('btn-secondary');
+                btnSalvar.classList.add('btn-primary');
+            }
+        }
     }
 }
 
@@ -345,15 +378,22 @@ async function salvarPermissoesBanco() {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${tokenJWT}` },
             body: JSON.stringify({ permissoes: perms })
         });
+        
         if (res.ok) { 
-            mostrarAlerta("Permissões atualizadas com sucesso!"); 
+            // Substituído para garantir o aviso na tela
+            mostrarToast("Permissões atualizadas com sucesso!", "success"); 
             carregarUsuariosGeral(); 
             
             if(parseInt(idUsuario) === parseInt(localStorage.getItem('intranet_userId'))) {
                  setTimeout(() => { alert("Você alterou suas próprias permissões. O sistema será recarregado."); fazerLogout(); }, 2000);
             }
+        } else {
+            // Caso a API retorne algum erro de validação (ex: barrar alteração de admin)
+            mostrarToast("Não foi possível atualizar as permissões.", "danger");
         }
-    } catch (error) { mostrarAlerta("Erro de conexão.", "danger"); }
+    } catch (error) { 
+        mostrarToast("Erro de conexão.", "danger"); 
+    }
 }
 
 async function carregarUptime() {

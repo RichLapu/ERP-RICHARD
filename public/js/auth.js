@@ -45,7 +45,7 @@ async function realizarLogin() {
             usuarioAtualNome = user.nome.split(' ')[0]; 
 
             // ======================================================
-            // 2. INÍCIO DA TRANSIÇÃO (SPLASH SCREEN - MANUAL)
+            // 2. INÍCIO DA TRANSIÇÃO (SPLASH SCREEN - APENAS MANUAL)
             // ======================================================
             const splashScreen = document.getElementById('welcome-splash');
             const welcomeMsg = document.getElementById('welcome-msg');
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // =========================================================
-    // RECUPERAÇÃO DE SESSÃO AUTOMÁTICA (AGORA COM SPLASH SCREEN)
+    // RECUPERAÇÃO DE SESSÃO AUTOMÁTICA (CARREGAMENTO INSTANTÂNEO NO F5)
     // =========================================================
     const tokenSalvo = localStorage.getItem('intranet_token');
 
@@ -138,34 +138,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.warn("Sessão expirada. Redirecionando para o login...");
                 fazerLogout();
             } else {
+                // TOKEN VÁLIDO! Monta a interface na mesma hora, sem splash screen
                 const nomeSalvo = localStorage.getItem('intranet_nome');
                 const cargoSalvo = localStorage.getItem('intranet_cargo');
                 const permsSalvas = localStorage.getItem('intranet_permissoes') || '';
                 
                 usuarioAtualNome = nomeSalvo ? nomeSalvo.split(' ')[0] : 'Usuário'; 
-
-                // ======================================================
-                // EXIBE O SPLASH SCREEN NO LOGIN AUTOMÁTICO
-                // ======================================================
-                const splashScreen = document.getElementById('welcome-splash');
-                const welcomeMsg = document.getElementById('welcome-msg');
-                const welcomeSub = document.getElementById('welcome-sub');
-
-                if (welcomeMsg) welcomeMsg.innerText = `Bem-vindo(a) de volta, ${usuarioAtualNome}!`;
-                if (welcomeSub) welcomeSub.innerText = `Preparando seu ambiente corporativo...`;
-
-                if (splashScreen) {
-                    splashScreen.classList.remove('d-none');
-                    splashScreen.classList.add('d-flex');
-                    void splashScreen.offsetWidth; 
-                    splashScreen.style.opacity = '1';
-                }
-
-                // Oculta login enquanto o splash brilha
-                document.getElementById('login-section').classList.add('d-none');
-
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                // ======================================================
 
                 document.getElementById('sidebar-nome').innerText = nomeSalvo;
                 document.getElementById('sidebar-cargo').innerText = cargoSalvo;
@@ -173,16 +151,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 aplicarPermissoesVisuais(permsSalvas);
 
-                // ======================================================
-                // OCULTA O SPLASH E EXIBE O PAINEL
-                // ======================================================
+                // Garante que o splash está invisível para não atrapalhar
+                const splashScreen = document.getElementById('welcome-splash');
                 if (splashScreen) {
-                    splashScreen.style.opacity = '0'; 
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    splashScreen.classList.remove('d-flex');
-                    splashScreen.classList.add('d-none'); 
+                    splashScreen.classList.add('d-none');
                 }
 
+                // Oculta login e mostra o painel diretamente
+                document.getElementById('login-section').classList.add('d-none');
                 document.getElementById('dashboard-wrapper').classList.remove('d-none');
                 
                 iniciarRelogio();
