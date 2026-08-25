@@ -317,11 +317,29 @@
 
                     <div class="card shadow-sm border-0" style="border-radius: 12px;">
                         <div class="card-body p-4">
+                            
+                            <!-- CONTROLES DE FILTRO E PESQUISA MODERNIZADOS -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-white shadow-sm">
+                                <div class="d-flex align-items-center ps-2">
+                                    <span class="text-muted small me-2 fw-medium">Exibir:</span>
+                                    <select id="itensPorPaginaUsuarios" class="form-select form-select-sm border-0 shadow-sm text-secondary fw-bold" style="width: 140px; cursor: pointer; border-radius: 10px;">
+                                        <option value="5">5 registros</option>
+                                        <option value="10" selected>10 registros</option>
+                                        <option value="20">20 registros</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative" style="width: 320px;">
+                                    <i class="bi bi-search position-absolute text-primary" style="top: 50%; left: 16px; transform: translateY(-50%);"></i>
+                                    <input type="text" id="pesquisaUsuarios" class="form-control border-0 shadow-sm ps-5" style="border-radius: 50px; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #ffffff;" placeholder="Pesquisar colaborador ou cargo...">
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light text-muted small">
                                         <tr>
-                                            <th>ID</th>
+                                            <!--<th>ID</th>-->
                                             <th>COLABORADOR</th>
                                             <th>CARGO</th>
                                             <th>STATUS</th>
@@ -331,6 +349,14 @@
                                     <tbody id="tabela-usuarios" class="border-top-0"></tbody>
                                 </table>
                             </div>
+                            
+                            <!-- CONTROLES DE PAGINAÇÃO -->
+                            <nav class="mt-4">
+                                <ul class="pagination pagination-sm justify-content-end mb-0 paginacao-moderna" id="paginacaoUsuarios">
+                                    <!-- Botões gerados pelo JavaScript -->
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>
@@ -443,6 +469,24 @@
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4">
+                            
+                            <!-- CONTROLES DE FILTRO E PESQUISA MODERNIZADOS -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-white shadow-sm">
+                                <div class="d-flex align-items-center ps-2">
+                                    <span class="text-muted small me-2 fw-medium">Exibir:</span>
+                                    <select id="itensPorPaginaItens" class="form-select form-select-sm border-0 shadow-sm text-secondary fw-bold" style="width: 140px; cursor: pointer; border-radius: 10px;">
+                                        <option value="5">5 registros</option>
+                                        <option value="10" selected>10 registros</option>
+                                        <option value="20">20 registros</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative" style="width: 320px;">
+                                    <i class="bi bi-search position-absolute text-primary" style="top: 50%; left: 16px; transform: translateY(-50%);"></i>
+                                    <input type="text" id="pesquisaItens" class="form-control border-0 shadow-sm ps-5" style="border-radius: 50px; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #ffffff;" placeholder="Pesquisar...">
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light text-muted small">
@@ -462,6 +506,13 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- CONTROLES DE PAGINAÇÃO -->
+                            <nav class="mt-4">
+                                <ul class="pagination pagination-sm justify-content-end mb-0 paginacao-moderna" id="paginacaoItens">
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>
@@ -480,6 +531,24 @@
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4">
+                            
+                            <!-- CONTROLES DE FILTRO E PESQUISA MODERNIZADOS -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-white shadow-sm">
+                                <div class="d-flex align-items-center ps-2">
+                                    <span class="text-muted small me-2 fw-medium">Exibir:</span>
+                                    <select id="itensPorPaginaMov" class="form-select form-select-sm border-0 shadow-sm text-secondary fw-bold" style="width: 140px; cursor: pointer; border-radius: 10px;">
+                                        <option value="5">5 registros</option>
+                                        <option value="10" selected>10 registros</option>
+                                        <option value="20">20 registros</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative" style="width: 320px;">
+                                    <i class="bi bi-search position-absolute text-primary" style="top: 50%; left: 16px; transform: translateY(-50%);"></i>
+                                    <input type="text" id="pesquisaMov" class="form-control border-0 shadow-sm ps-5" style="border-radius: 50px; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #ffffff;" placeholder="Pesquisar...">
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light text-muted small">
@@ -497,6 +566,13 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- CONTROLES DE PAGINAÇÃO -->
+                            <nav class="mt-4">
+                                <ul class="pagination pagination-sm justify-content-end mb-0 paginacao-moderna" id="paginacaoMov">
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>   
@@ -514,6 +590,24 @@
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4">
+
+                            <!-- CONTROLES DE FILTRO E PESQUISA MODERNIZADOS -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-white shadow-sm">
+                                <div class="d-flex align-items-center ps-2">
+                                    <span class="text-muted small me-2 fw-medium">Exibir:</span>
+                                    <select id="itensPorPaginaFornecedores" class="form-select form-select-sm border-0 shadow-sm text-secondary fw-bold" style="width: 140px; cursor: pointer; border-radius: 10px;">
+                                        <option value="5">5 registros</option>
+                                        <option value="10" selected>10 registros</option>
+                                        <option value="20">20 registros</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative" style="width: 320px;">
+                                    <i class="bi bi-search position-absolute text-primary" style="top: 50%; left: 16px; transform: translateY(-50%);"></i>
+                                    <input type="text" id="pesquisaFornecedores" class="form-control border-0 shadow-sm ps-5" style="border-radius: 50px; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #ffffff;" placeholder="Pesquisar...">
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light text-muted small">
@@ -528,6 +622,13 @@
                                     <tbody id="tabela-fornecedores" class="border-top-0"></tbody>
                                 </table>
                             </div>
+                            
+                            <!-- CONTROLES DE PAGINAÇÃO -->
+                            <nav class="mt-4">
+                                <ul class="pagination pagination-sm justify-content-end mb-0 paginacao-moderna" id="paginacaoFornecedores">
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>
@@ -546,6 +647,24 @@
 
                     <div class="card shadow-sm border-0">
                         <div class="card-body p-4">
+
+                            <!-- CONTROLES DE FILTRO E PESQUISA MODERNIZADOS -->
+                            <div class="d-flex justify-content-between align-items-center mb-4 p-2 bg-light rounded-4 border border-white shadow-sm">
+                                <div class="d-flex align-items-center ps-2">
+                                    <span class="text-muted small me-2 fw-medium">Exibir:</span>
+                                    <select id="itensPorPaginaClientes" class="form-select form-select-sm border-0 shadow-sm text-secondary fw-bold" style="width: 140px; cursor: pointer; border-radius: 10px;">
+                                        <option value="5">5 registros</option>
+                                        <option value="10" selected>10 registros</option>
+                                        <option value="20">20 registros</option>
+                                        <option value="todos">Todos</option>
+                                    </select>
+                                </div>
+                                <div class="position-relative" style="width: 320px;">
+                                    <i class="bi bi-search position-absolute text-primary" style="top: 50%; left: 16px; transform: translateY(-50%);"></i>
+                                    <input type="text" id="pesquisaClientes" class="form-control border-0 shadow-sm ps-5" style="border-radius: 50px; padding-top: 0.5rem; padding-bottom: 0.5rem; background-color: #ffffff;" placeholder="Pesquisar...">
+                                </div>
+                            </div>
+
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="table-light text-muted small">
@@ -562,6 +681,13 @@
                                     <tbody id="tabela-clientes" class="border-top-0"></tbody>
                                 </table>
                             </div>
+
+                            <!-- CONTROLES DE PAGINAÇÃO -->
+                            <nav class="mt-4">
+                                <ul class="pagination pagination-sm justify-content-end mb-0 paginacao-moderna" id="paginacaoClientes">
+                                </ul>
+                            </nav>
+
                         </div>
                     </div>
                 </div>

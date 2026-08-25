@@ -1,3 +1,28 @@
+// =====================================================================
+// VARIÁVEIS GLOBAIS E PAGINAÇÃO
+// =====================================================================
+let modalInstanciaCliente = null;
+let listaClientesMemoria = [];
+let controlePaginaClientes = 1;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const inputPesquisa = document.getElementById('pesquisaClientes');
+    const selectItens = document.getElementById('itensPorPaginaClientes');
+    
+    if (inputPesquisa) {
+        inputPesquisa.addEventListener('input', () => {
+            controlePaginaClientes = 1;
+            renderizarTabelaClientes();
+        });
+    }
+    if (selectItens) {
+        selectItens.addEventListener('change', () => {
+            controlePaginaClientes = 1;
+            renderizarTabelaClientes();
+        });
+    }
+});
+
 // ================= CONTROLE PF / PJ ================= //
 function alternarTipoCliente() {
     const isPJ = document.getElementById('tipo_pj').checked;
@@ -68,8 +93,7 @@ function aplicarMascaraDoc(input) {
     }
 }
 
-let modalInstanciaCliente = null;
-let listaClientesMemoria = [];
+// ================= RENDERIZAÇÃO E FILTROS ================= //
 
 async function carregarClientesTabela() {
     try {
@@ -77,11 +101,47 @@ async function carregarClientesTabela() {
         const clientes = await resposta.json();
         
         listaClientesMemoria = clientes;
-        const tbody = document.getElementById('tabela-clientes');
-        if(!tbody) return;
-        tbody.innerHTML = ''; 
+        renderizarTabelaClientes();
 
-        clientes.forEach(c => {
+    } catch (error) { console.error("Erro", error); }
+}
+
+function renderizarTabelaClientes() {
+    const tbody = document.getElementById('tabela-clientes');
+    const paginacao = document.getElementById('paginacaoClientes');
+    if (!tbody) return;
+
+    const inputBusca = document.getElementById('pesquisaClientes');
+    const selectItens = document.getElementById('itensPorPaginaClientes');
+    
+    const termoBusca = inputBusca ? inputBusca.value.toLowerCase() : '';
+    const itensPorPagina = selectItens ? selectItens.value : '10';
+
+    // Filtro
+    let filtrados = listaClientesMemoria.filter(c => 
+        (c.nome_razao && c.nome_razao.toLowerCase().includes(termoBusca)) || 
+        (c.nome_fantasia && c.nome_fantasia.toLowerCase().includes(termoBusca)) || 
+        (c.cpf_cnpj && c.cpf_cnpj.toLowerCase().includes(termoBusca)) ||
+        (c.email && c.email.toLowerCase().includes(termoBusca))
+    );
+
+    // Paginação
+    let limite = itensPorPagina === 'todos' ? filtrados.length : parseInt(itensPorPagina);
+    if (limite === 0 || isNaN(limite)) limite = 10;
+
+    const totalPaginas = Math.ceil(filtrados.length / limite);
+    if (controlePaginaClientes > totalPaginas && totalPaginas > 0) controlePaginaClientes = totalPaginas;
+
+    const inicio = (controlePaginaClientes - 1) * limite;
+    const fim = inicio + limite;
+    const itensDaPagina = filtrados.slice(inicio, fim);
+
+    // Desenhar Tabela
+    tbody.innerHTML = ''; 
+    if (itensDaPagina.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Nenhum cliente encontrado.</td></tr>';
+    } else {
+        itensDaPagina.forEach(c => {
             const isAtivo = c.status === 'ativo';
             const novoStatus = isAtivo ? 'inativo' : 'ativo';
             const badgeTipo = c.tipo_pessoa === 'PJ' ? '<span class="badge bg-dark">PJ</span>' : '<span class="badge bg-info text-dark">PF</span>';
@@ -105,8 +165,40 @@ async function carregarClientesTabela() {
             `;
             tbody.appendChild(tr);
         });
-    } catch (error) { console.error("Erro", error); }
+    }
+
+    // Desenhar Paginação
+    if (paginacao) {
+        paginacao.innerHTML = '';
+        if (totalPaginas > 1) {
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaClientes === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaClientes(event, ${controlePaginaClientes - 1})">Anterior</a>
+                </li>
+            `;
+            for (let i = 1; i <= totalPaginas; i++) {
+                paginacao.innerHTML += `
+                    <li class="page-item ${controlePaginaClientes === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="mudarPaginaClientes(event, ${i})">${i}</a>
+                    </li>
+                `;
+            }
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaClientes === totalPaginas ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaClientes(event, ${controlePaginaClientes + 1})">Próxima</a>
+                </li>
+            `;
+        }
+    }
 }
+
+function mudarPaginaClientes(evento, novaPagina) {
+    if (evento) evento.preventDefault();
+    controlePaginaClientes = novaPagina;
+    renderizarTabelaClientes();
+}
+
+// ================= LÓGICAS DE MODAL E CADASTRO ================= //
 
 function abrirModalCliente() {
     if (!modalInstanciaCliente) modalInstanciaCliente = new bootstrap.Modal(document.getElementById('modalCliente'));

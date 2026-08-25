@@ -1,24 +1,107 @@
+// Apenas criamos uma variável exclusiva para a paginação desta tela.
+// NÃO declaramos listaUsuariosMemoria nem modalInstancia, pois elas já existem no seu sistema!
+let controlePaginaUsuarios = 1;
+
+// 1. EVENTOS DE PESQUISA, PAGINAÇÃO E INICIALIZAÇÃO
+document.addEventListener('DOMContentLoaded', () => {
+    const inputPesquisa = document.getElementById('pesquisaUsuarios');
+    const selectItens = document.getElementById('itensPorPaginaUsuarios');
+    
+    if (inputPesquisa) {
+        inputPesquisa.addEventListener('input', () => {
+            controlePaginaUsuarios = 1;
+            renderizarTabelaUsuarios();
+        });
+    }
+    
+    if (selectItens) {
+        selectItens.addEventListener('change', () => {
+            controlePaginaUsuarios = 1;
+            renderizarTabelaUsuarios();
+        });
+    }
+
+    // Carrega a tabela automaticamente assim que a página abrir
+    if(typeof tokenJWT !== 'undefined') {
+        carregarUsuariosGeral();
+    }
+});
+
+// 2. FUNÇÃO ADAPTADA: APENAS BAIXA OS DADOS E PREENCHE OS SELECTS
 async function carregarUsuariosGeral() {
     try {
         const resposta = await fetch('/api/usuarios', { headers: { 'Authorization': `Bearer ${tokenJWT}` } });
         const usuarios = await resposta.json();
         
+        // Atualiza a variável global que já existe no seu código original
         listaUsuariosMemoria = usuarios; 
-        document.getElementById('widget-usuarios').innerText = usuarios.filter(u => (u.status || 'ativo').toLowerCase() === 'ativo').length;
-
-        const tbody = document.getElementById('tabela-usuarios');
-        tbody.innerHTML = ''; 
         
-        const selectPermissoes = document.getElementById('select-permissoes-usuario');
-        selectPermissoes.innerHTML = '<option value="">-- Selecione o Colaborador --</option>';
+        const widgetUsuarios = document.getElementById('widget-usuarios');
+        if (widgetUsuarios) {
+            widgetUsuarios.innerText = usuarios.filter(u => (u.status || 'ativo').toLowerCase() === 'ativo').length;
+        }
 
-        usuarios.forEach(user => {
+        const selectPermissoes = document.getElementById('select-permissoes-usuario');
+        if (selectPermissoes) {
+            selectPermissoes.innerHTML = '<option value="">-- Selecione o Colaborador --</option>';
+            usuarios.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.text = `${user.nome} (${user.role})`;
+                selectPermissoes.appendChild(option);
+            });
+        }
+
+        // Chama a função que desenha a tabela com paginação e filtro
+        renderizarTabelaUsuarios();
+        
+    } catch (error) { console.error("Erro ao carregar usuários:", error); }
+}
+
+// 3. NOVA FUNÇÃO: DESENHA A TABELA COM FILTRO E PAGINAÇÃO
+function renderizarTabelaUsuarios() {
+    const tbody = document.getElementById('tabela-usuarios');
+    const paginacao = document.getElementById('paginacaoUsuarios');
+    
+    if (!tbody) return; // Proteção extra para não dar erro em outras abas
+
+    const inputBusca = document.getElementById('pesquisaUsuarios');
+    const selectItens = document.getElementById('itensPorPaginaUsuarios');
+    
+    const termoBusca = inputBusca ? inputBusca.value.toLowerCase() : '';
+    const itensPorPagina = selectItens ? selectItens.value : '10';
+
+    // A. Filtrar
+    let filtrados = listaUsuariosMemoria.filter(u => 
+        (u.nome && u.nome.toLowerCase().includes(termoBusca)) || 
+        (u.email && u.email.toLowerCase().includes(termoBusca)) ||
+        (u.role && u.role.toLowerCase().includes(termoBusca))
+    );
+
+    // B. Paginar
+    let limite = itensPorPagina === 'todos' ? filtrados.length : parseInt(itensPorPagina);
+    if (limite === 0 || isNaN(limite)) limite = 10;
+
+    const totalPaginas = Math.ceil(filtrados.length / limite);
+    
+    if (controlePaginaUsuarios > totalPaginas && totalPaginas > 0) controlePaginaUsuarios = totalPaginas;
+
+    const inicio = (controlePaginaUsuarios - 1) * limite;
+    const fim = inicio + limite;
+    const usuariosDaPagina = filtrados.slice(inicio, fim);
+
+    // C. Desenhar Tabela
+    tbody.innerHTML = ''; 
+
+    if (usuariosDaPagina.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum usuário encontrado com esse filtro.</td></tr>';
+    } else {
+        usuariosDaPagina.forEach(user => {
             const isAtivo = (user.status || 'ativo').toLowerCase() === 'ativo';
             const novoStatus = isAtivo ? 'inativo' : 'ativo';
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td class="fw-bold text-muted">#${user.id}</td>
                 <td><div class="fw-bold text-dark">${user.nome}</div><small class="text-muted">${user.email}</small></td>
                 <td><span class="badge bg-light text-dark border">${user.role}</span></td>
                 <td><span class="badge ${isAtivo ? 'bg-success' : 'bg-secondary'}">${isAtivo ? 'ATIVO' : 'INATIVO'}</span></td>
@@ -28,14 +111,43 @@ async function carregarUsuariosGeral() {
                 </td>
             `;
             tbody.appendChild(tr);
-
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.text = `${user.nome} (${user.role})`;
-            selectPermissoes.appendChild(option);
         });
-    } catch (error) { console.error(error); }
+    }
+    // cola id caso precise "<td class="fw-bold text-muted">#${user.id}</td>"
+    // D. Desenhar Botões de Paginação
+    if (paginacao) {
+        paginacao.innerHTML = '';
+        if (totalPaginas > 1) {
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaUsuarios === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaUsuarios(event, ${controlePaginaUsuarios - 1})">Anterior</a>
+                </li>
+            `;
+            for (let i = 1; i <= totalPaginas; i++) {
+                paginacao.innerHTML += `
+                    <li class="page-item ${controlePaginaUsuarios === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="mudarPaginaUsuarios(event, ${i})">${i}</a>
+                    </li>
+                `;
+            }
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaUsuarios === totalPaginas ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaUsuarios(event, ${controlePaginaUsuarios + 1})">Próxima</a>
+                </li>
+            `;
+        }
+    }
 }
+
+function mudarPaginaUsuarios(evento, novaPagina) {
+    if (evento) evento.preventDefault();
+    controlePaginaUsuarios = novaPagina;
+    renderizarTabelaUsuarios();
+}
+
+// =====================================================================
+// ROTINAS DE CADASTRO E EDIÇÃO
+// =====================================================================
 
 async function cadastrarFuncionario() {
     const nome = document.getElementById('novo-nome').value;
@@ -137,6 +249,8 @@ function simularCargaDePermissoes() {
     const painel = document.getElementById('painel-modulos');
     const infoBox = document.getElementById('info-usuario-selecionado');
 
+    if(!select || !painel || !infoBox) return;
+
     if(select.value === "") {
         painel.style.opacity = "0.4";
         painel.style.pointerEvents = "none";
@@ -145,7 +259,6 @@ function simularCargaDePermissoes() {
         const usuario = listaUsuariosMemoria.find(u => u.id === parseInt(select.value));
         if (!usuario) return;
 
-        // 1. Zera todos os checkboxes
         document.getElementById('mod-cadastro').checked = false;
         document.getElementById('mod-listar').checked = false;
         document.getElementById('mod-permissoes').checked = false;
@@ -155,11 +268,9 @@ function simularCargaDePermissoes() {
         document.getElementById('mod-clientes').checked = false;
         document.getElementById('mod-financeiro').checked = false;
         
-        // Zera o checkbox da Agenda
         const checkAgenda = document.getElementById('mod-agenda');
         if (checkAgenda) checkAgenda.checked = false;
 
-        // 2. Marca apenas o que o usuário tem no banco
         if (usuario.permissoes) {
             const arr = usuario.permissoes.split(',');
             if (arr.includes('mod-cadastro')) document.getElementById('mod-cadastro').checked = true;
@@ -170,8 +281,6 @@ function simularCargaDePermissoes() {
             if (arr.includes('mod-estoque-fornecedores')) document.getElementById('mod-estoque-fornecedores').checked = true;
             if (arr.includes('mod-clientes')) document.getElementById('mod-clientes').checked = true;
             if (arr.includes('mod-financeiro')) document.getElementById('mod-financeiro').checked = true;
-            
-            // Marca o checkbox da Agenda se ele tiver a permissão
             if (arr.includes('mod-agenda') && checkAgenda) checkAgenda.checked = true;
         }
 
@@ -196,8 +305,6 @@ async function salvarPermissoesBanco() {
     if (document.getElementById('mod-estoque-fornecedores').checked) perms.push('mod-estoque-fornecedores');
     if (document.getElementById('mod-clientes').checked) perms.push('mod-clientes');
     if (document.getElementById('mod-financeiro').checked) perms.push('mod-financeiro');
-    
-    // Captura a nova permissão da Agenda
     if (document.getElementById('mod-agenda') && document.getElementById('mod-agenda').checked) perms.push('mod-agenda');
 
     try {
@@ -210,8 +317,6 @@ async function salvarPermissoesBanco() {
             mostrarAlerta("Permissões atualizadas com sucesso!"); 
             carregarUsuariosGeral(); 
             
-            // Dica bônus: se você alterar suas PRÓPRIAS permissões, 
-            // avisa pra relogar para aplicar na hora no menu lateral
             if(parseInt(idUsuario) === parseInt(localStorage.getItem('intranet_userId'))) {
                  setTimeout(() => { alert("Você alterou suas próprias permissões. O sistema será recarregado."); fazerLogout(); }, 2000);
             }

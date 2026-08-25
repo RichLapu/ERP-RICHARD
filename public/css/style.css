@@ -440,3 +440,32 @@ body.dark-mode .sidebar a.text-danger i {
 .sidebar::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.3) !important; 
 }
+
+/* =======================================
+   ESTILO MODERNO PARA PAGINAÇÃO (GLOBAL)
+   ======================================= */
+.paginacao-moderna .page-item { margin: 0 4px; }
+.paginacao-moderna .page-link {
+    border: none;
+    border-radius: 10px;
+    color: #6c757d;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+    transition: all 0.2s ease-in-out;
+}
+.paginacao-moderna .page-link:hover {
+    background-color: #e2e6ea;
+    color: #0d6efd;
+    transform: translateY(-2px);
+}
+.paginacao-moderna .page-item.active .page-link {
+    background-color: #0d6efd;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+.paginacao-moderna .page-item.disabled .page-link {
+    background-color: transparent;
+    color: #adb5bd;
+}

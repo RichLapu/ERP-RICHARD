@@ -1,5 +1,27 @@
+// =====================================================================
+// VARIÁVEIS GLOBAIS E PAGINAÇÃO
+// =====================================================================
 let modalInstanciaFornecedor = null;
 let listaFornecedoresMemoria = [];
+let controlePaginaFornecedores = 1;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const inputPesquisa = document.getElementById('pesquisaFornecedores');
+    const selectItens = document.getElementById('itensPorPaginaFornecedores');
+    
+    if (inputPesquisa) {
+        inputPesquisa.addEventListener('input', () => {
+            controlePaginaFornecedores = 1;
+            renderizarTabelaFornecedores();
+        });
+    }
+    if (selectItens) {
+        selectItens.addEventListener('change', () => {
+            controlePaginaFornecedores = 1;
+            renderizarTabelaFornecedores();
+        });
+    }
+});
 
 // ================= MÁSCARAS DE FORMATAÇÃO ================= //
 
@@ -23,17 +45,55 @@ function aplicarMascaraTelefone(v) {
     return v.substring(0, 15);                          // Limita a 15 caracteres
 }
 
+
+// ================= RENDERIZAÇÃO E FILTROS ================= //
+
 async function carregarFornecedoresTabela() {
     try {
         const resposta = await fetch('/api/fornecedores', { headers: { 'Authorization': `Bearer ${tokenJWT}` } });
         const fornecedores = await resposta.json();
         
         listaFornecedoresMemoria = fornecedores;
-        const tbody = document.getElementById('tabela-fornecedores');
-        if(!tbody) return;
-        tbody.innerHTML = ''; 
+        renderizarTabelaFornecedores();
 
-        fornecedores.forEach(f => {
+    } catch (error) { console.error("Erro", error); }
+}
+
+function renderizarTabelaFornecedores() {
+    const tbody = document.getElementById('tabela-fornecedores');
+    const paginacao = document.getElementById('paginacaoFornecedores');
+    if (!tbody) return;
+
+    const inputBusca = document.getElementById('pesquisaFornecedores');
+    const selectItens = document.getElementById('itensPorPaginaFornecedores');
+    
+    const termoBusca = inputBusca ? inputBusca.value.toLowerCase() : '';
+    const itensPorPagina = selectItens ? selectItens.value : '10';
+
+    // Filtro
+    let filtrados = listaFornecedoresMemoria.filter(f => 
+        (f.nome_fantasia && f.nome_fantasia.toLowerCase().includes(termoBusca)) || 
+        (f.cnpj && f.cnpj.toLowerCase().includes(termoBusca)) || 
+        (f.email && f.email.toLowerCase().includes(termoBusca))
+    );
+
+    // Paginação
+    let limite = itensPorPagina === 'todos' ? filtrados.length : parseInt(itensPorPagina);
+    if (limite === 0 || isNaN(limite)) limite = 10;
+
+    const totalPaginas = Math.ceil(filtrados.length / limite);
+    if (controlePaginaFornecedores > totalPaginas && totalPaginas > 0) controlePaginaFornecedores = totalPaginas;
+
+    const inicio = (controlePaginaFornecedores - 1) * limite;
+    const fim = inicio + limite;
+    const itensDaPagina = filtrados.slice(inicio, fim);
+
+    // Desenhar Tabela
+    tbody.innerHTML = ''; 
+    if (itensDaPagina.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Nenhum fornecedor encontrado.</td></tr>';
+    } else {
+        itensDaPagina.forEach(f => {
             const isAtivo = f.status === 'ativo';
             const novoStatus = isAtivo ? 'inativo' : 'ativo';
 
@@ -53,8 +113,40 @@ async function carregarFornecedoresTabela() {
             `;
             tbody.appendChild(tr);
         });
-    } catch (error) { console.error("Erro", error); }
+    }
+
+    // Desenhar Paginação
+    if (paginacao) {
+        paginacao.innerHTML = '';
+        if (totalPaginas > 1) {
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaFornecedores === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaFornecedores(event, ${controlePaginaFornecedores - 1})">Anterior</a>
+                </li>
+            `;
+            for (let i = 1; i <= totalPaginas; i++) {
+                paginacao.innerHTML += `
+                    <li class="page-item ${controlePaginaFornecedores === i ? 'active' : ''}">
+                        <a class="page-link" href="#" onclick="mudarPaginaFornecedores(event, ${i})">${i}</a>
+                    </li>
+                `;
+            }
+            paginacao.innerHTML += `
+                <li class="page-item ${controlePaginaFornecedores === totalPaginas ? 'disabled' : ''}">
+                    <a class="page-link" href="#" onclick="mudarPaginaFornecedores(event, ${controlePaginaFornecedores + 1})">Próxima</a>
+                </li>
+            `;
+        }
+    }
 }
+
+function mudarPaginaFornecedores(evento, novaPagina) {
+    if (evento) evento.preventDefault();
+    controlePaginaFornecedores = novaPagina;
+    renderizarTabelaFornecedores();
+}
+
+// ================= LÓGICAS DE MODAL E CADASTRO ================= //
 
 function abrirModalFornecedor() {
     if (!modalInstanciaFornecedor) modalInstanciaFornecedor = new bootstrap.Modal(document.getElementById('modalFornecedor'));
