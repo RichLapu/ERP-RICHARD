@@ -1,10 +1,10 @@
 const mysql = require('mysql2/promise');
 
 const db = mysql.createPool({
-    host: process.env.DB_HOST || 'intranet-db.cspiueqwiu56.us-east-1.rds.amazonaws.com', 
-    user: process.env.DB_USER || 'admin',                               
-    password: process.env.DB_PASSWORD || 'senhaextremamentefortedodb',               
-    database: process.env.DB_NAME || 'intranet_db',
+    host: process.env.DB_HOST, 
+    user: process.env.DB_USER,                               
+    password: process.env.DB_PASSWORD,               
+    database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
