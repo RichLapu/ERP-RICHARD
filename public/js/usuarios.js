@@ -33,6 +33,20 @@ async function carregarUsuariosGeral() {
         const resposta = await fetch('/api/usuarios', { headers: { 'Authorization': `Bearer ${tokenJWT}` } });
         const usuarios = await resposta.json();
         
+        // ==========================================
+        // ESCUDO DE PROTEÇÃO CONTRA ERROS DA API
+        // ==========================================
+        if (!Array.isArray(usuarios)) {
+            console.error("A API não retornou uma lista de usuários! O servidor respondeu com:", usuarios);
+            
+            const tbody = document.getElementById('tabela-usuarios');
+            if (tbody) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger fw-bold py-4">Erro ao carregar usuários do servidor. Verifique o console.</td></tr>`;
+            }
+            return; // Interrompe a função aqui para proteger o .filter e o .forEach
+        }
+        // ==========================================
+        
         // Atualiza a variável global que já existe no seu código original
         listaUsuariosMemoria = usuarios; 
         
