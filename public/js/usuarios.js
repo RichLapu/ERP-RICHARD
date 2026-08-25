@@ -292,6 +292,38 @@ function simularCargaDePermissoes() {
     }
 }
 
+// =========================================================
+    // TRAVA DE SEGURANÇA PARA O ADMINISTRADOR
+    // =========================================================
+    const cargoUsuario = document.getElementById('perm-cargo-exibicao').innerText.trim();
+    const checkboxes = document.querySelectorAll('#painel-modulos .form-check-input');
+    const btnSalvar = document.querySelector('button[onclick="salvarPermissoesBanco()"]');
+
+    if (cargoUsuario === 'Administrador') {
+        // Se for Admin: Marca tudo e bloqueia edição
+        checkboxes.forEach(chk => {
+            chk.checked = true;
+            chk.disabled = true;
+        });
+        
+        // Altera o botão para dar um feedback visual claro
+        if (btnSalvar) {
+            btnSalvar.disabled = true;
+            btnSalvar.innerText = "Acesso Total (Bloqueado)";
+            btnSalvar.classList.replace('btn-primary', 'btn-secondary');
+        }
+    } else {
+        // Se for outro cargo: Libera os checkboxes para edição normal
+        checkboxes.forEach(chk => chk.disabled = false);
+        
+        // Restaura o botão de salvar
+        if (btnSalvar) {
+            btnSalvar.disabled = false;
+            btnSalvar.innerText = "Salvar Permissões";
+            btnSalvar.classList.replace('btn-secondary', 'btn-primary');
+        }
+    }
+
 async function salvarPermissoesBanco() {
     const idUsuario = document.getElementById('select-permissoes-usuario').value;
     if (!idUsuario) return;
