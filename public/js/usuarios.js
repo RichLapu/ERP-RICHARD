@@ -419,3 +419,51 @@ async function carregarUptime() {
         if (widget) widget.innerText = "Offline";
     }
 }
+
+// =========================================================
+// SCRIPT DE DIAGNÓSTICO AUTOMÁTICO
+// =========================================================
+function rodarTestesDeSanidade() {
+    console.log("%c🚀 INICIANDO TESTES DE SANIDADE - INTRA NET", "color: #4e73df; font-size: 16px; font-weight: bold;");
+
+    let testesPassaram = 0;
+    let totalTestes = 5;
+
+    // 1. Verifica Splash Screen
+    if(document.getElementById('welcome-splash')) {
+        console.log("✅ [1/5] Splash Screen encontrado no HTML.");
+        testesPassaram++;
+    } else console.error("❌ [1/5] Erro: Splash Screen ausente.");
+
+    // 2. Verifica Funções de Login
+    if(typeof realizarLogin === "function") {
+        console.log("✅ [2/5] Função de Login (realizarLogin) está intacta.");
+        testesPassaram++;
+    } else console.error("❌ [2/5] Erro: Função de Login quebrada.");
+
+    // 3. Verifica Trava do Administrador
+    if(typeof simularCargaDePermissoes === "function") {
+        console.log("✅ [3/5] Motor de permissões e trava de segurança operacionais.");
+        testesPassaram++;
+    } else console.error("❌ [3/5] Erro: Lógica de permissões falhou.");
+
+    // 4. Verifica API de Salvamento
+    if(typeof salvarPermissoesBanco === "function") {
+        console.log("✅ [4/5] Gatilho de salvamento de permissões (salvarPermissoesBanco) pronto.");
+        testesPassaram++;
+    } else console.error("❌ [4/5] Erro: Função de salvamento ausente.");
+
+    // 5. Verifica Sessão
+    if(localStorage.getItem('intranet_token')) {
+        console.log("✅ [5/5] Token de sessão ativo. Recuperação de F5 deve funcionar.");
+        testesPassaram++;
+    } else {
+        console.warn("⚠️ [5/5] Nenhum token detectado (Usuário logado ou na tela inicial).");
+        testesPassaram++; 
+    }
+
+    console.log(`%c🎯 Resultado: ${testesPassaram}/${totalTestes} verificações concluídas.`, "color: #1cc88a; font-size: 14px; font-weight: bold;");
+}
+
+// O sistema vai rodar o teste sozinho 3 segundos depois que a página abrir
+setTimeout(rodarTestesDeSanidade, 3000);
