@@ -26,7 +26,12 @@ app.use('/api/clientes', clientesRoutes);
 app.use('/api/financeiro', financeiroRoutes);
 app.use('/api/agenda', agendaRoutes);
 
-// 4. Inicia o servidor
-app.listen(3000, () => {
-    console.log("Servidor MVC da Intranet rodando na porta 3000!");
-});
+// 4. Exportação para Vercel e Inicialização Local
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(3000, () => {
+        console.log("Servidor MVC da Intranet rodando na porta 3000!");
+    });
+}
+
+// A Vercel precisa desta exportação para rodar o backend
+module.exports = app;
