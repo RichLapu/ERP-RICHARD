@@ -394,19 +394,18 @@ async function salvarPermissoesBanco() {
         });
         
         if (res.ok) { 
-            // Substituído para garantir o aviso na tela
-            mostrarToast("Permissões atualizadas com sucesso!", "success"); 
+            // CORRIGIDO: Voltamos para o seu padrão mostrarAlerta!
+            mostrarAlerta("Permissões atualizadas com sucesso!", "success"); 
             carregarUsuariosGeral(); 
             
             if(parseInt(idUsuario) === parseInt(localStorage.getItem('intranet_userId'))) {
                  setTimeout(() => { alert("Você alterou suas próprias permissões. O sistema será recarregado."); fazerLogout(); }, 2000);
             }
         } else {
-            // Caso a API retorne algum erro de validação (ex: barrar alteração de admin)
-            mostrarToast("Não foi possível atualizar as permissões.", "danger");
+            mostrarAlerta("Não foi possível atualizar as permissões.", "danger");
         }
     } catch (error) { 
-        mostrarToast("Erro de conexão.", "danger"); 
+        mostrarAlerta("Erro de conexão.", "danger"); 
     }
 }
 
