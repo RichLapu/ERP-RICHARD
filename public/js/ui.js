@@ -381,35 +381,42 @@ async function carregarPaineisSecundarios() {
         if (resMov.ok) {
             const movs = await resMov.json();
             const containerMov = document.getElementById('lista-ultimas-movimentacoes');
-            containerMov.innerHTML = '';
-            
-            const ultimas = movs.slice(0, 4);
-            if(ultimas.length === 0) {
-                containerMov.innerHTML = '<tr><td colspan="3" class="text-center text-muted small py-3">Sem movimentações recentes</td></tr>';
-            } else {
-                ultimas.forEach(m => {
-                    let cor = m.tipo === 'entrada' ? 'text-success' : (m.tipo === 'retirada' ? 'text-danger' : 'text-primary');
-                    
-                    let dataOriginal = m.data_hora || m.data_movimentacao || m.data_registro || m.data || m.created_at;
-                    let dataFormatada = '--/--/----';
-                    
-                    if (dataOriginal) {
-                        let dataFormatavel = typeof dataOriginal === 'string' ? dataOriginal.replace(' ', 'T') : dataOriginal;
-                        dataFormatada = new Date(dataFormatavel).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-                        if(dataFormatada === 'Invalid Date') dataFormatada = '--/--/----';
-                    }
+            if (containerMov) {
+                containerMov.innerHTML = '';
+                
+                // Filtra para remover os cancelados ANTES de pegar os 4 últimos
+                const movsAtivas = movs.filter(m => m.status !== 'cancelado');
+                const ultimas = movsAtivas.slice(0, 4);
+                
+                if(ultimas.length === 0) {
+                    containerMov.innerHTML = '<tr><td colspan="3" class="text-center text-muted small py-3">Sem movimentações recentes</td></tr>';
+                } else {
+                    ultimas.forEach(m => {
+                        let cor = m.tipo === 'entrada' ? 'text-success' : (m.tipo === 'retirada' ? 'text-danger' : 'text-primary');
+                        
+                        let dataOriginal = m.data_hora || m.data_movimentacao || m.data_registro || m.data || m.created_at;
+                        let dataFormatada = '--/--/----';
+                        
+                        if (dataOriginal) {
+                            let dataFormatavel = typeof dataOriginal === 'string' ? dataOriginal.replace(' ', 'T') : dataOriginal;
+                            dataFormatada = new Date(dataFormatavel).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+                            if(dataFormatada === 'Invalid Date') dataFormatada = '--/--/----';
+                        }
 
-                    containerMov.innerHTML += `
-                        <tr>
-                            <td class="ps-4 fw-bold ${cor} text-uppercase" style="font-size: 0.7rem;">${m.tipo}</td>
-                            <td class="small text-muted fw-semibold">${dataFormatada}</td>
-                            <td class="fw-bold">${m.quantidade} un.</td>
-                        </tr>
-                    `;
-                });
+                        containerMov.innerHTML += `
+                            <tr>
+                                <td class="ps-4 fw-bold ${cor} text-uppercase" style="font-size: 0.7rem;">${m.tipo}</td>
+                                <td class="small text-muted fw-semibold">${dataFormatada}</td>
+                                <td class="fw-bold">${m.quantidade} un.</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
         }
-    } catch(e) {}
+    } catch(e) {
+        console.error("Erro ao carregar últimas movimentações do estoque:", e);
+    }
 
     // 5. Mini Agenda do Dia
     try {
