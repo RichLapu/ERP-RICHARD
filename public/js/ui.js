@@ -303,11 +303,19 @@ async function carregarPaineisSecundarios() {
                 }
 
                 // ==========================================
-                // Filtra apenas os últimos 7 dias para o gráfico
+                // CORREÇÃO DO FUSO HORÁRIO E DATAS FUTURAS
                 // ==========================================
-                let dataOriginal = mov.data || mov.data_registro || mov.data_hora || mov.created_at;
+                let dataOriginal = mov.data_movimentacao || mov.data_registro || mov.data || mov.created_at;
                 if (dataOriginal) {
-                    let dataMov = new Date(typeof dataOriginal === 'string' ? dataOriginal.replace(' ', 'T') : dataOriginal);
+                    // Força a leitura apenas do "Ano-Mês-Dia", ignorando horas e fuso horário
+                    let dataStr = typeof dataOriginal === 'string' ? dataOriginal.split('T')[0] : dataOriginal.toISOString().split('T')[0];
+                    let [ano, mes, dia] = dataStr.split('-');
+                    let dataMov = new Date(ano, mes - 1, dia); // Cria a data local exata
+                    
+                    // Ignora lançamentos futuros no gráfico "Balanço da Semana"
+                    let hojeLocal = new Date();
+                    hojeLocal.setHours(0,0,0,0);
+                    if (dataMov > hojeLocal) return; 
                     
                     if (dataMov >= dataLimite) {
                         let nomeDia = dataMov.toLocaleDateString('pt-BR', { weekday: 'short', timeZone: 'America/Sao_Paulo' }).replace('.', '').toLowerCase();

@@ -45,6 +45,12 @@ async function carregarTabelaMovimentacoesFinanceiro() {
         const resposta = await fetch('/api/financeiro', { headers: { 'Authorization': `Bearer ${tokenJWT}` } });
         const movimentacoes = await resposta.json();
         
+        // 🛡️ BLINDAGEM DE SEGURANÇA: Garante que o retorno é uma lista antes de tentar filtrar
+        if (!Array.isArray(movimentacoes)) {
+            console.error("A API não retornou uma lista válida:", movimentacoes);
+            return;
+        }
+
         listaFinanceiroMemoria = movimentacoes; 
         
         const tbody = document.getElementById('tabela-financeiro');
@@ -202,3 +208,24 @@ async function cancelarFinanceiro(id) {
         }
     } catch (error) { mostrarAlerta("Erro de conexão", "danger"); }
 }
+
+// ==========================================
+// GATILHOS DE FILTRO E PAGINAÇÃO AUTOMÁTICA
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const selectPaginacao = document.getElementById('fin-limite-pag');
+    const selectTipo = document.getElementById('fin-filtro-tipo');
+    const inputBusca = document.getElementById('fin-busca');
+
+    if (selectPaginacao) {
+        selectPaginacao.addEventListener('change', carregarTabelaMovimentacoesFinanceiro);
+    }
+
+    if (selectTipo) {
+        selectTipo.addEventListener('change', carregarTabelaMovimentacoesFinanceiro);
+    }
+
+    if (inputBusca) {
+        inputBusca.addEventListener('input', carregarTabelaMovimentacoesFinanceiro);
+    }
+});
